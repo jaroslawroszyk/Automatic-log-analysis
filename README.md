@@ -49,7 +49,7 @@ This motor generates a strong electromagnetic (EM) field that can interfere with
 
 ## Example of input file content with noise:
 
-![Noices](docs/NOICES.png)
+![Noices](docs/assets/NOICES.png)
 
 ## Standard range of parameters
 

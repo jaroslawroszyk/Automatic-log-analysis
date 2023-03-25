@@ -30,7 +30,7 @@ Silnik ten generuje mocne pole elektromagnetyczne (EM), które może powodować 
 
 ## Przykład zawartości pliku wejściowego z zakłóceniami:
 
-![Noices](docs/ZAKLOCENIA.png)
+![Noices](assets/ZAKLOCENIA.png)
 ## Standardowy zakres parametrów
 
 Zakres normalnej temperatury pracy tego silnika to **0 do 100 stopni włącznie**, a akceptowalny poziom zakłóceń (procentowy poziom wadliwych logów) to **0 do 10 procent włącznie**.
