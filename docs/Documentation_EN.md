@@ -1,33 +1,10 @@
-# CelsiaLog
-
-[![Python Test](https://github.com/jaroslawroszyk/CelsiaLog/actions/workflows/build.yml/badge.svg)](https://github.com/jaroslawroszyk/CelsiaLog/actions/workflows/build.yml)
-[![Project Status](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](#license)
-## CelsiaLog whats mean?
-comes from the name of the temperature unit (degrees Celsius), which is related to the main element of log analysis - temperature measurements.
-
-# Libs used:
-- https://docs.python.org/3/library/re.html
-- https://docs.python.org/3/library/datetime.html
-
-# Setup project:
-* `pip install -r requirements.txt`
-
-### (Optional) Create a Python environment: 
-* For Python3 users: 
-  * `pip install virtualenv`
-  * `virtualenv venv_name`
-  * `source path/to/venv_name activate`
-
-
-# Documentation:
-## Description
+# Description
 
 As a new programmer at an automotive company, you were tasked with writing a program to automatically analyze the logs of an experimental electric motor. In the log in the form of a text file, the sensor saves the temperature measurements inside the engine, each measurement is on a separate line.
 
-## Input data:
+# Input data:
 
-### Description
+## Description
 
 An input file containing lines, where each line contains the following data:
 
@@ -53,7 +30,7 @@ This motor generates a strong electromagnetic (EM) field that can interfere with
 
 ## Example of input file content with noise:
 
-![Noices](docs/assets/NOICES.png)
+![NOICES](assets/NOICES.png) 
 
 ## Standard range of parameters
 
