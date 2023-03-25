@@ -1,4 +1,6 @@
-# Celsia
+# CelsiaLog
+## CelsiaLog whats mean?
+comes from the name of the temperature unit (degrees Celsius), which is related to the main element of log analysis - temperature measurements.
 
 # Setup project:
 * `pip install -r requirements.txt`
