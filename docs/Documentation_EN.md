@@ -1,23 +1,10 @@
-# Celsia
-
-# Setup project:
-* `pip install -r requirements.txt`
-
-### (Optional) Create a Python environment: 
-* For Python3 users: 
-  * `pip install virtualenv`
-  * `virtualenv venv_name`
-  * `source path/to/venv_name activate`
-
-
-# Documentation:
-## Description
+# Entry
 
 As a new programmer at an automotive company, you were tasked with writing a program to automatically analyze the logs of an experimental electric motor. In the log in the form of a text file, the sensor saves the temperature measurements inside the engine, each measurement is on a separate line.
 
-## Input data:
+# Input data:
 
-### Description
+## Description
 
 An input file containing lines, where each line contains the following data:
 
@@ -39,7 +26,7 @@ The above guidelines must be **strictly** followed by lines in the input file
 
 This motor generates a strong electromagnetic (EM) field that can interfere with the sensor. If there is any interference in the line with the input data (e.g. some data does not comply with the specified format, date/time is incorrect, any of the data is missing, the temperature is negative, etc.) causing the above data guidelines not to be met, then the given line is considered a faulty log.
 
-![Foo](docs/img1.png)  
+![Foo](img1.png)  
 
 ## Standard range of parameters
 
