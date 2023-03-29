@@ -6,6 +6,10 @@
 ## CelsiaLog whats mean?
 comes from the name of the temperature unit (degrees Celsius), which is related to the main element of log analysis - temperature measurements.
 
+# Libs used:
+- https://docs.python.org/3/library/re.html
+- https://docs.python.org/3/library/datetime.html
+
 # Setup project:
 * `pip install -r requirements.txt`
 
