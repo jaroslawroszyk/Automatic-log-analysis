@@ -1,6 +1,7 @@
 import unittest
-from src.utils.time_difference_utils import calculate_time_difference
-from src.exceptnions.time_exception import InvalidTime
+import sys
+
+from time_utils import calculate_time_difference
 
 
 class TimeTests(unittest.TestCase):
@@ -25,11 +26,11 @@ class TimeTests(unittest.TestCase):
         end = "2023-04-03 04:20"
         self.assertEqual(calculate_time_difference(start, end), 4320)
 
-    def test_should_raise_excpetion_when_end_is_lower_than_start_date(self):
-        start = "2023-03-29 00:00"
-        end = "2023-03-28 00:00"
-        with self.assertRaises(InvalidTime):
-            calculate_time_difference(start, end)
+    def test_fast(self):
+        start = "2023-01-01 23:00"
+        end = "2023-01-02 00:10"
+        self.assertEqual(calculate_time_difference(start, end), 70)
+
 
 
 if __name__ == '__main__':

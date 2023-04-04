@@ -1,6 +1,6 @@
 import unittest
-from src.utils.calculate_percentage_of_invalid_logs import calculate_percentage_of_invalid_logs
 
+from calculate_percentage_of_invalid_logs import calculate_percentage_of_invalid_logs
 
 class PercentageOfInvalidLogsTests(unittest.TestCase):
 

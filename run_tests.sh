@@ -1,1 +1,1 @@
-clear && python3 -m unittest discover tests
+clear && python3 -m unittest discover test

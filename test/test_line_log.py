@@ -1,6 +1,6 @@
 import unittest
 
-from src.logs.valid_log_line import is_invalid_log
+from valid_log_line import is_invalid_log
 
 invalid_log = '202x-01-x0 23:x0 42xC'
 valid_log = '2023-01-01 01:01 10C'
