@@ -1,30 +1,40 @@
-import pprint
 import json
 
+
 class Temperatura:
-    max = 0.0
-    min = 0.0
-    srednia = 69.0
+
+    def __init__(self,
+                 max=None,
+                 min=None,
+                 srednia=None):
+        self.max = max
+        self.min = min
+        self.srednia = srednia
 
     def to_json(self) -> str:
         obj = {
-            "max": str(round(self.max, 1)),
-            "min": str(round(self.min, 1)),
-            "srednia": str(round(self.srednia, 1))
+            "max": None if self.max is None else str(round(self.max, 1)),
+            "min": None if self.min is None else str(round(self.min, 1)),
+            "srednia": None if self.srednia is None else str(round(self.srednia, 1))
         }
         return json.dumps(obj, indent=2)
 
     def __repr__(self) -> str:
-        return self.to_json()
+        return self.to_json().replace("null", "None")
+
 
 class Problemy:
-    wysoki_poziom_zaklocen_EM = False
-    wysokie_ryzyko_uszkodzenia_silnika_z_powodu_temperatury = False
+
+    def __init__(self,
+                 wysoki_poziom_zaklocen_EM=False,
+                 wysokie_ryzyko_uszkodzenia_silnika_z_powodu_temperatury=False):
+        self.wysoki_poziom_zaklocen_EM = wysoki_poziom_zaklocen_EM
+        self.wysokie_ryzyko_uszkodzenia_silnika_z_powodu_temperatury = wysokie_ryzyko_uszkodzenia_silnika_z_powodu_temperatury
 
     def to_json(self) -> str:
         obj = {
-            "wysoki_poziom_zaklocen_EM" : self.wysoki_poziom_zaklocen_EM,
-            "wysokie_ryzyko_uszkodzenia_silnika_z_powodu_temperatury" : self.wysokie_ryzyko_uszkodzenia_silnika_z_powodu_temperatury
+            "wysoki_poziom_zaklocen_EM": self.wysoki_poziom_zaklocen_EM,
+            "wysokie_ryzyko_uszkodzenia_silnika_z_powodu_temperatury": self.wysokie_ryzyko_uszkodzenia_silnika_z_powodu_temperatury
         }
         return json.dumps(obj, indent=2)
 
@@ -34,13 +44,22 @@ class Problemy:
 
 
 class Raport:
-    wadliwe_logi = []
-    procent_wadliwych_logow = 0.0
-    czas_trwania_raportu = 0
-    temperatura = Temperatura()
-    najdluzszy_czas_przegrzania = 0
-    liczba_okresow_przegrzania = 0
-    problemy = Problemy()
+
+    def __init__(self,
+                 wadliwe_logi=[],
+                 procent_wadliwych_logow=100.0,
+                 czas_trwania_raportu=0,
+                 temperatura=Temperatura(),
+                 najdluzszy_czas_przegrzania=0,
+                 liczba_okresow_przegrzania=0,
+                 problemy=Problemy()):
+        self.wadliwe_logi = wadliwe_logi
+        self.procent_wadliwych_logow = procent_wadliwych_logow
+        self.czas_trwania_raportu = czas_trwania_raportu
+        self.temperatura = temperatura
+        self.najdluzszy_czas_przegrzania = najdluzszy_czas_przegrzania
+        self.liczba_okresow_przegrzania = liczba_okresow_przegrzania
+        self.problemy = problemy
 
     def to_json(self) -> str:
         obj = {
@@ -55,9 +74,10 @@ class Raport:
         return json.dumps(obj, indent=2)
 
     def __repr__(self) -> str:
-    
+
         s = self.to_json()
-        return s.replace("false", "False").replace("true", "True")
+        return s.replace("false", "False").replace("true", "True").replace("null", "None")
+
 
 if __name__ == '__main__':
     temperatura = Temperatura()
@@ -68,5 +88,4 @@ if __name__ == '__main__':
     problemy.wysoki_poziom_zaklocen_EM = True
     problemy.wysokie_ryzyko_uszkodzenia_silnika_z_powodu_temperatury = False
     raport = Raport()
-    raport.wadliwe_logi = ["dupa","dupa2"]
     print(raport)
