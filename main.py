@@ -1,7 +1,6 @@
 from datetime import datetime
 from calculate_percentage_of_invalid_logs import calculate_error_logs_percentage, calculate_percentage_of_invalid_logs
 from time_utils import calculate_time_difference, check_correct_time, czas_trwania
-# from time_utils import calculate_time_difference, czas_trwania, get_report_duration
 
 from valid_log_line import is_invalid_log
 
@@ -50,32 +49,24 @@ def sprawdz_temperatury(logi):
         return None
 
 def time_overheating(logs):
-    # tworzymy słownik z okresami przegrzania
     okresy = {}
 
-    # pobranie godziny rozpoczęcia przegrzania
     czas_start = ''
-    # przechodzimy po wszystkich logach
     for log in logs:
-        # rozbijamy log na poszczególne elementy
         data, godzina, temperatura = log.split()
         data_godzina = datetime.strptime(data + ' ' + godzina, '%Y-%d-%m %H:%M')
         czas = data_godzina.strftime('%Y-%d-%m %H:%M')
-        # jeżeli temperatura jest powyżej 100C to zapamiętujemy godzinę rozpoczęcia przegrzania
         if float(temperatura[:-1]) > 100:
             if not czas_start:
                 czas_start = czas
-        # jeżeli temperatura jest równa lub poniżej 100C, to zapisujemy okres w słowniku
         else:
             if czas_start:
                 czas_trwania = calculate_time_difference(czas_start, czas)
                 okresy[f"okres{len(okresy) + 1}"] = czas_trwania
                 czas_start = ''
 
-        # jeżeli mamy ostatni okres przegrzania, który nie został dodany do słownika, to dodajemy go
         if czas_start:
             okresy[f"okres{len(okresy) + 1}"] = calculate_time_difference(czas_start, czas)
-    # zwracamy największą wartość z słownika
     result = max(okresy.values(), default=0)
     return result
 
@@ -135,28 +126,16 @@ def generate_raport(file_path):
         # procent_wadliwych_logow = calculate_error_logs_percentage(
         #     incorrect_logs, number_of_logs, correct_logs)
         # procent_wadliwych_logow_float = float(procent_wadliwych_logow)
-        # if number_of_logs > 0:
-        #     procent_wadliwych_logow_float = (incorrect_logs / number_of_logs) * 100
-        #     procent_wadliwych_logow_float = round(procent_wadliwych_logow_float,1)
-        #     procent_wadliwych_logow = str(procent_wadliwych_logow_float)
-        # if incorrect_logs == 0 and len(correct_logs) > 0:
-        #     procent_wadliwych_logow = "0.0"
+ 
         if incorrect_logs > 0:
             procent_wadliwych_logow_float = (incorrect_logs / number_of_logs) * 100
             procent_wadliwych_logow_float = round(procent_wadliwych_logow_float, 1)
             procent_wadliwych_logow = str(procent_wadliwych_logow_float)
         if incorrect_logs == 0 and len(correct_logs) > 0:
             procent_wadliwych_logow = "0.0"
-        print("jarke:  procent_wadliwych_logow kurwa ", procent_wadliwych_logow)
-        # print("jarek: procent_wadliwych_logow ",procent_wadliwych_logow)
-        # print("jarek: before wadliwe_logi", wadliwe_logi)
         delete_white_characters(wadliwe_logi)
         delete_white_characters(correct_logs)
-        # print("wadliwe_logi[i]",  wadliwe_logi)
-        # print("procent_wadliwych_logow", procent_wadliwych_logow)
-        # print("jarek: aftrer wadliwe_logi", wadliwe_logi)
 
-        # print("Correct_logs", correct_logs)
     czas_trwania_raportu = czas_trwania(correct_logs)
     
     if len(correct_logs) > 0:
@@ -170,15 +149,13 @@ def generate_raport(file_path):
         najdluzszy_czas_przegrzania = time_overheating(correct_logs)
         liczba_okresow_przegrzania = overheating_periods(correct_logs)
 
-        # print("jarek: temperatura_min", temperatura_min)
-        # print("jarek: temperatura_min_str", temperatura_min_str)
 
     if procent_wadliwych_logow_float > 10:
         problemy['wysoki_poziom_zaklocen_EM'] = True
 
     if najdluzszy_czas_przegrzania > 10:
         problemy['wysokie_ryzyko_uszkodzenia_silnika_z_powodu_temperatury'] = True
-
+    print("jarek problemy", problemy)
     raport = {
         "wadliwe_logi": wadliwe_logi,
         "procent_wadliwych_logow": procent_wadliwych_logow,
@@ -199,14 +176,4 @@ def generate_raport(file_path):
     return raport
 
 
-# print(generate_raport('test_input_single.txt'))
-
-# test correcrt behavour
-# try:
-
-#     start = "2023-03-29 00:00"
-#     end = "2023-03-28 00:00"
-
-#     print(calculate_time_difference(start,end))
-# except InvalidTime:
-#     print(InvalidTime)
+print(generate_raport("test_input_single.txt"))

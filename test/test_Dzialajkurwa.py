@@ -49,7 +49,8 @@ class EmptyTest(unittest.TestCase):
         file_path = "test/inputs/test_second_from_spec.txt"
 
         expected_output = {
-            "wadliwe_logi": ["2023-x1-01 23:5x 10xC",
+            "wadliwe_logi": [
+            "2023-x1-01 23:5x 10xC",
                              "2023-01-02 00:10"],
             "procent_wadliwych_logow": "40.0",
             "czas_trwania_raportu": 70,

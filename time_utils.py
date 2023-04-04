@@ -1,9 +1,6 @@
 from datetime import datetime
 
 
-# Todo:
-# When you use that funciton you should use try : execepts block
-## time_elapse to to samo
 def calculate_time_difference(start_time_str, end_time_str):
     if start_time_str < end_time_str:
         start_time = datetime.strptime(start_time_str, "%Y-%m-%d %H:%M")
