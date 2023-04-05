@@ -1,50 +1,27 @@
 from datetime import datetime
-from Raport import Raport
-from calculate_percentage_of_invalid_logs import calculate_error_logs_percentage, calculate_percentage_of_invalid_logs
-from time_utils import calculate_time_difference, check_correct_time, czas_trwania
+from Raport import Raport, Temperatura
+from time_utils import calculate_time_difference, time_duration
 
 from valid_log_line import is_invalid_log
 
+# def convert_log(log):
+#     parts = log.rsplit(' ', 1)
+#     date, temp = parts[0], parts[1]
+#     timestamp = datetime.strptime(date.strip(), '%Y-%m-%d %H:%M').timestamp()
+#     tempStamp = temp[:-1]
+#     return timestamp, tempStamp
 
-def sprawdz_temperatury(logi):
-    if len(logi) > 1:
-        temperatury = []
-        for log in logi:
-            log = log.split()
-            temperatura = log[2].rstrip("C")
-            temperatury.append(float(temperatura))
+def convert_log(log):
+    parts = log.rsplit(' ', 1)
+    temp = parts[1]
+    return float(temp[:-1])
 
-        min_temp = min(temperatury)
-        max_temp = max(temperatury)
-        avg_temp = round(sum(temperatury) / len(temperatury), 1)
-
-        mapa_temperatur = dict()
-        mapa_temperatur["min_temp"] = min_temp
-        mapa_temperatur["max_temp"] = max_temp
-        mapa_temperatur["avg_temp"] = avg_temp
-
-        return mapa_temperatur
-    elif len(logi) == 1:
-        temperatury = []
-
-        log = logi[0]
-        log = log.split()
-        temperatura = log[2].rstrip("C")
-        temperatury.append(float(temperatura))
-
-        min_temp = log[2]
-        max_temp = log[2]
-        avg_temp = log[2]
-
-        mapa_temperatur = dict()
-        mapa_temperatur["min_temp"] = min_temp
-        mapa_temperatur["max_temp"] = max_temp
-        mapa_temperatur["avg_temp"] = avg_temp
-
-        return mapa_temperatur
-    else:
-        return None
-
+def sprawdz_temperature(lista_logow):
+    var_temp = list(map(convert_log, lista_logow))
+    return Temperatura(
+        min=min(var_temp),
+        max=max(var_temp),
+        srednia=round(sum(var_temp) / len(var_temp), 1))
 
 def time_overheating(logs):
     okresy = {}
@@ -72,8 +49,6 @@ def time_overheating(logs):
 
 def overheating_periods(logs):
     if len(logs) > 0:
-        logs = check_correct_time(logs)
-
         periods = 0
         current_period = False
         if logs is not None:
@@ -93,49 +68,54 @@ def overheating_periods(logs):
     else:
         return 0
 
+
+def filter_logs(file_path):
+    correct_logs = []
+    incorrent_logs = []
+    with open(file_path, 'r') as file:
+        for line in file:
+            if not is_invalid_log(line):
+                correct_logs.append(line.strip())
+            else:
+                incorrent_logs.append(line.strip())
+    return correct_logs, incorrent_logs
+
+
+def count_incorrect_logs(incorrect_log_count, correct_log_count):
+    procent_wadliwych_logow = 100.0
+    if incorrect_log_count > 0:
+        procent_wadliwych_logow = 100 * incorrect_log_count / \
+            (correct_log_count + incorrect_log_count)
+
+    return procent_wadliwych_logow
+
+
 def generate_raport(file_path):
     raport = Raport()
 
-    with open(file_path, 'r') as file:
-        number_of_logs = 0
-        incorrect_logs = 0
-        correct_logs = []
-        for line in file:
-            number_of_logs += 1
-            if not is_invalid_log(line):
-                correct_logs.append(line)
-            else:
-                raport.wadliwe_logi.append(line.strip())
-                incorrect_logs += 1
+    correct_logs, incorrent_logs = filter_logs(file_path)
+    raport.wadliwe_logi = incorrent_logs
 
-        # procent_wadliwych_logow = calculate_error_logs_percentage(
-        #     incorrect_logs, number_of_logs, correct_logs)
-        # procent_wadliwych_logow_float = float(procent_wadliwych_logow)
+    incorrect_log_count = len(raport.wadliwe_logi)
+    correct_log_count = len(correct_logs)
 
-        if incorrect_logs > 0:
-            raport.procent_wadliwych_logow = (
-                incorrect_logs / number_of_logs) * 100
+    raport.procent_wadliwych_logow = count_incorrect_logs(
+        incorrect_log_count, correct_log_count)
+    raport.czas_trwania_raportu = time_duration(correct_logs)
 
-    raport.czas_trwania_raportu = czas_trwania(correct_logs)
-
-    if len(correct_logs) > 0:
-        temperatury = sprawdz_temperatury(correct_logs)
-        print("JR! temperatury xD", temperatury)
-        raport.temperatura.min = temperatury['min_temp']
-        raport.temperatura.max = temperatury['max_temp']
-        raport.temperatura.srednia = temperatury['avg_temp']
+    if correct_log_count > 0:
+        raport.temperatura = sprawdz_temperature(correct_logs)
 
         raport.najdluzszy_czas_przegrzania = time_overheating(correct_logs)
         raport.liczba_okresow_przegrzania = overheating_periods(correct_logs)
 
-# ADD to konsturkutro
-    if raport.procent_wadliwych_logow > 10.0 and incorrect_logs > 0:
+    if raport.procent_wadliwych_logow > 10.0 and incorrect_log_count > 0:
         raport.problemy.wysoki_poziom_zaklocen_EM = True
 
     if raport.najdluzszy_czas_przegrzania > 10.0:
         raport.problemy.wysokie_ryzyko_uszkodzenia_silnika_z_powodu_temperatury = True
 
-    return raport
+    return raport.to_dict()
 
 
-# print(generate_raport("test_input_single.txt"))
+generate_raport("test/inputs/test_second_from_spec.txt")

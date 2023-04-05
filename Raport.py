@@ -11,13 +11,15 @@ class Temperatura:
         self.min = min
         self.srednia = srednia
 
-    def to_json(self) -> str:
-        obj = {
+    def to_dict(self):
+        return {
             "max": None if self.max is None else str(round(self.max, 1)),
             "min": None if self.min is None else str(round(self.min, 1)),
             "srednia": None if self.srednia is None else str(round(self.srednia, 1))
         }
-        return json.dumps(obj, indent=2)
+
+    def to_json(self) -> str:
+        return json.dumps(self.to_dict(), indent=2)
 
     def __repr__(self) -> str:
         return self.to_json().replace("null", "None")
@@ -31,12 +33,14 @@ class Problemy:
         self.wysoki_poziom_zaklocen_EM = wysoki_poziom_zaklocen_EM
         self.wysokie_ryzyko_uszkodzenia_silnika_z_powodu_temperatury = wysokie_ryzyko_uszkodzenia_silnika_z_powodu_temperatury
 
-    def to_json(self) -> str:
-        obj = {
+    def to_dict(self):
+        return {
             "wysoki_poziom_zaklocen_EM": self.wysoki_poziom_zaklocen_EM,
             "wysokie_ryzyko_uszkodzenia_silnika_z_powodu_temperatury": self.wysokie_ryzyko_uszkodzenia_silnika_z_powodu_temperatury
         }
-        return json.dumps(obj, indent=2)
+
+    def to_json(self) -> str:
+        return json.dumps(self.to_dict(), indent=2)
 
     def __repr__(self) -> str:
         s = self.to_json()
@@ -61,8 +65,8 @@ class Raport:
         self.liczba_okresow_przegrzania = liczba_okresow_przegrzania
         self.problemy = problemy
 
-    def to_json(self) -> str:
-        obj = {
+    def to_dict(self):
+        return {
             "wadliwe_logi": self.wadliwe_logi,
             "procent_wadliwych_logow": str(self.procent_wadliwych_logow),
             "czas_trwania_raportu": self.czas_trwania_raportu,
@@ -71,7 +75,9 @@ class Raport:
             "liczba_okresow_przegrzania": self.liczba_okresow_przegrzania,
             "problemy": json.loads(self.problemy.to_json())
         }
-        return json.dumps(obj, indent=2)
+
+    def to_json(self) -> str:
+        return json.dumps(self.to_dict(), indent=2)
 
     def __repr__(self) -> str:
 
