@@ -70,12 +70,13 @@ class Raport:
             "wadliwe_logi": self.wadliwe_logi,
             "procent_wadliwych_logow": str(self.procent_wadliwych_logow),
             "czas_trwania_raportu": self.czas_trwania_raportu,
-            "temperatura": json.loads(self.temperatura.to_json()),
+            "temperatura": self.temperatura.to_dict(),
             "najdluzszy_czas_przegrzania": self.najdluzszy_czas_przegrzania,
             "liczba_okresow_przegrzania": self.liczba_okresow_przegrzania,
-            "problemy": json.loads(self.problemy.to_json())
+            "problemy": self.problemy.to_dict()
         }
 
+    #For debugging purposes :) 
     def to_json(self) -> str:
         return json.dumps(self.to_dict(), indent=2)
 
@@ -83,15 +84,3 @@ class Raport:
 
         s = self.to_json()
         return s.replace("false", "False").replace("true", "True").replace("null", "None")
-
-
-if __name__ == '__main__':
-    temperatura = Temperatura()
-    temperatura.max = 100.0
-    temperatura.min = 2.0
-    temperatura.srednia = 69.0
-    problemy = Problemy()
-    problemy.wysoki_poziom_zaklocen_EM = True
-    problemy.wysokie_ryzyko_uszkodzenia_silnika_z_powodu_temperatury = False
-    raport = Raport()
-    print(raport)

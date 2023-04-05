@@ -1,15 +1,7 @@
 from datetime import datetime
 from Raport import Raport, Temperatura
-from time_utils import calculate_time_difference, time_duration
-
+from time_utils import time_duration
 from valid_log_line import is_invalid_log
-
-# def convert_log(log):
-#     parts = log.rsplit(' ', 1)
-#     date, temp = parts[0], parts[1]
-#     timestamp = datetime.strptime(date.strip(), '%Y-%m-%d %H:%M').timestamp()
-#     tempStamp = temp[:-1]
-#     return timestamp, tempStamp
 
 def convert_log(log):
     parts = log.rsplit(' ', 1)
@@ -21,53 +13,37 @@ def sprawdz_temperature(lista_logow):
     return Temperatura(
         min=min(var_temp),
         max=max(var_temp),
-        srednia=round(sum(var_temp) / len(var_temp), 1))
+        srednia=sum(var_temp) / len(var_temp))
 
-def time_overheating(logs):
-    okresy = {}
-
-    czas_start = ''
-    for log in logs:
-        data, godzina, temperatura = log.split()
-        data_godzina = datetime.strptime(
-            data + ' ' + godzina, '%Y-%d-%m %H:%M')
-        czas = data_godzina.strftime('%Y-%d-%m %H:%M')
-        if float(temperatura[:-1]) > 100:
-            if not czas_start:
-                czas_start = czas
-        else:
-            if czas_start:
-                czas_trwania = calculate_time_difference(czas_start, czas)
-                okresy[f"okres{len(okresy) + 1}"] = czas_trwania
-                czas_start = ''
-
-        if czas_start:
-            okresy[f"okres{len(okresy) + 1}"] = calculate_time_difference(czas_start, czas)
-    result = max(okresy.values(), default=0)
-    return result
-
+def convert_log_for_overheating(log):
+    parts = log.rsplit(' ', 1)
+    date, temp = parts[0], parts[1]
+    timestamp = datetime.strptime(date.strip(), '%Y-%m-%d %H:%M').timestamp()
+    temp = float(temp[:-1])
+    return timestamp / 60, temp > 100
 
 def overheating_periods(logs):
-    if len(logs) > 0:
-        periods = 0
-        current_period = False
-        if logs is not None:
-            for i in range(1, len(logs)):
-                temp1 = float(logs[i - 1].split()[2][:-1])
-                temp2 = float(logs[i].split()[2][:-1])
+    tuple_logs = map(convert_log_for_overheating, logs)
+    tuple_logs_sorted = sorted(tuple_logs, key=lambda x : x[0])
 
-                if temp1 <= 100 and temp2 > 100:
-                    current_period = True
-                    periods += 1
-                elif temp1 > 100 and temp2 <= 100:
-                    current_period = False
+    n = len(tuple_logs_sorted)
+    i, j = 0, 0
+    periods = []
 
-            return periods
-        else:
-            return 0
-    else:
-        return 0
+    while i < n:
+        if not tuple_logs_sorted[i][1]:
+            i += 1
+            j += 1
+            continue
+        
+        while j < n and tuple_logs_sorted[j][1]:
+            j += 1
+        
+        last_log = tuple_logs_sorted[j][0] if j < n else tuple_logs_sorted[j-1][0]
+        periods.append((last_log - tuple_logs_sorted[i][0]))
+        i = j
 
+    return periods
 
 def filter_logs(file_path):
     correct_logs = []
@@ -80,7 +56,6 @@ def filter_logs(file_path):
                 incorrent_logs.append(line.strip())
     return correct_logs, incorrent_logs
 
-
 def count_incorrect_logs(incorrect_log_count, correct_log_count):
     procent_wadliwych_logow = 100.0
     if incorrect_log_count > 0:
@@ -89,8 +64,7 @@ def count_incorrect_logs(incorrect_log_count, correct_log_count):
 
     return procent_wadliwych_logow
 
-
-def generate_raport(file_path):
+def generuj_raport(file_path):
     raport = Raport()
 
     correct_logs, incorrent_logs = filter_logs(file_path)
@@ -105,17 +79,18 @@ def generate_raport(file_path):
 
     if correct_log_count > 0:
         raport.temperatura = sprawdz_temperature(correct_logs)
-
-        raport.najdluzszy_czas_przegrzania = time_overheating(correct_logs)
-        raport.liczba_okresow_przegrzania = overheating_periods(correct_logs)
+        periods = overheating_periods(correct_logs)
+        raport.najdluzszy_czas_przegrzania = max(periods + [0])
+        raport.liczba_okresow_przegrzania = len(periods)
 
     if raport.procent_wadliwych_logow > 10.0 and incorrect_log_count > 0:
         raport.problemy.wysoki_poziom_zaklocen_EM = True
 
     if raport.najdluzszy_czas_przegrzania > 10.0:
         raport.problemy.wysokie_ryzyko_uszkodzenia_silnika_z_powodu_temperatury = True
+    print(raport)   
 
     return raport.to_dict()
 
 
-generate_raport("test/inputs/test_second_from_spec.txt")
+generuj_raport("test/inputs/test_third_from_spec.txt")

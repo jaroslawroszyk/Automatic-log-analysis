@@ -1,7 +1,7 @@
 import unittest
 from Raport import Problemy, Raport, Temperatura
 
-from main import generate_raport
+from main import generuj_raport
 
 
 class EmptyTest(unittest.TestCase):
@@ -9,7 +9,7 @@ class EmptyTest(unittest.TestCase):
         file_path = "test/inputs/empty_file.txt"
         expected_output = Raport()
 
-        raport = generate_raport(file_path)
+        raport = generuj_raport(file_path)
         self.assertEqual(raport, expected_output.to_dict())
 
     def test_with_one_invalid_log(self):
@@ -19,7 +19,7 @@ class EmptyTest(unittest.TestCase):
             procent_wadliwych_logow=100.0
         )
 
-        raport = generate_raport(file_path)
+        raport = generuj_raport(file_path)
         self.assertEqual(raport, expected_output.to_dict())
 
     def test_from_spec_first_Example(self):
@@ -28,7 +28,7 @@ class EmptyTest(unittest.TestCase):
             czas_trwania_raportu=70,
             temperatura=Temperatura(max=100.0, min=90.0, srednia=95.0))
 
-        result = generate_raport(file_path)
+        result = generuj_raport(file_path)
         self.assertEqual(result, expected_output.to_dict())
 
     def test_from_spec_second_Example(self):
@@ -40,7 +40,38 @@ class EmptyTest(unittest.TestCase):
             temperatura=Temperatura(max=100.0, min=90.0, srednia=95.0),
             problemy=Problemy(wysoki_poziom_zaklocen_EM=True))
 
-        result = generate_raport(file_path)
+        result = generuj_raport(file_path)
+        self.assertEqual(result, expected_output.to_dict())
+
+    def test_from_spec_second_Example(self):
+        file_path = "test/inputs/test_third_from_spec.txt"
+        expected_output = Raport(
+            wadliwe_logi=["2023-x1-01 23:5x 10xC",
+                          "2023-01-02 00:15 -78C",
+                          "2023-01-02 01:10"],
+            procent_wadliwych_logow=30.0,
+            czas_trwania_raportu=120,
+            temperatura=Temperatura(max=115.3, min=90.0, srednia=102.4),
+            najdluzszy_czas_przegrzania=40,
+            liczba_okresow_przegrzania=2,
+            problemy=Problemy(True, True))
+
+        result = generuj_raport(file_path)
+        self.assertEqual(result, expected_output.to_dict())
+
+    def test_with_przegrzanie_alkoholowe(self):
+        file_path = "test/inputs/fast_pivo.txt"
+        expected_output = Raport(
+            wadliwe_logi=[
+                          "2023-01-02 01:20"],
+            procent_wadliwych_logow=20.0,
+            czas_trwania_raportu=50,
+            temperatura=Temperatura(max=115.3, min=100.1, srednia=105.4),
+            najdluzszy_czas_przegrzania=50,
+            liczba_okresow_przegrzania=1,
+            problemy=Problemy(True, True))
+
+        result = generuj_raport(file_path)
         self.assertEqual(result, expected_output.to_dict())
 
 
